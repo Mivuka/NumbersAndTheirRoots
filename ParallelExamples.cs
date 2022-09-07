@@ -1,30 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace NumbersAndTheirRoots
+﻿namespace NumbersAndTheirRoots
 {
-
-    public class ParallelExamples
-    {
-        public static async Task DealWithParallelForEachAsync(int start, int end)
+    public class NumberRootPairsPrinter
+    {       
+        public static void PrintNumberRootPairsInRange(int start, int end)
         {
-            var range = Enumerable.Range(start, end);
-            await Parallel.ForEachAsync(range, LongRunningOperationAsync);
-        }
+            var range = Enumerable.Range(start, end - start);
 
-        static void LongRunningOperation(int operationId)
+            var pairStrings = range.AsParallel().AsOrdered().Select(n => GetToStringNumberRootPair(n));
+
+            foreach (var pair in pairStrings)
+            {
+                Console.WriteLine(pair);
+            }            
+        }
+        public static string GetToStringNumberRootPair(int number)
         {
-            Console.WriteLine($"Root of {operationId} is {Math.Sqrt(operationId)}");
+            return ($"{number} -> {Math.Round(Math.Sqrt(number),2)}");
         }
-
-        static ValueTask LongRunningOperationAsync(int operationId, CancellationToken token)
-        {
-            LongRunningOperation(operationId);
-            return ValueTask.CompletedTask;
-        }
-
     }
 }
